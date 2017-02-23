@@ -55,9 +55,35 @@ public class DeviceTwinDevice
         return this.mapToSet(this.reportedProperties);
     }
 
-    protected void setReportedProperties(Set<Pair> reportedProperties)
+
+    protected void setReportedProperties(Map<String, Object> reportedProperties)
     {
-        this.reportedProperties = this.setToMap(reportedProperties);
+        this.reportedProperties = reportedProperties;
+    }
+
+    protected void setDesiredProperties(Map<String, Object> desiredProperties)
+    {
+        this.desiredProperties = desiredProperties;
+    }
+
+    protected void setTag(Map<String, Object> tag)
+    {
+        this.tag = tag;
+    }
+
+    protected Map<String, Object> getTagMap()
+    {
+        return this.tag;
+    }
+
+    protected Map<String, Object> getDesiredMap()
+    {
+        return this.desiredProperties;
+    }
+
+    protected Map<String, Object> getReportedMap()
+    {
+        return this.reportedProperties;
     }
 
     public String toString()
@@ -103,7 +129,7 @@ public class DeviceTwinDevice
         return thisDeviceDesProp.toString();
     }
 
-    protected Set<Pair> mapToSet(Map<String, Object> map)
+    private Set<Pair> mapToSet(Map<String, Object> map)
     {
         Set<Pair> setPair = new HashSet<>();
 
@@ -119,7 +145,7 @@ public class DeviceTwinDevice
 
     }
 
-    protected Map<String, Object> setToMap(Set<Pair> set)
+    private Map<String, Object> setToMap(Set<Pair> set)
     {
         Map<String, Object> map = new HashMap<>();
 

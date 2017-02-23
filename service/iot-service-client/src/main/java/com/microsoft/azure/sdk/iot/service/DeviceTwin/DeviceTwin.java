@@ -29,24 +29,6 @@ public class DeviceTwin
     private Integer requestId = 0;
     private Twin twinObject = new Twin();
 
-    public DeviceTwin(RegistryManager registryManager)
-    {
-        if (registryManager == null)
-        {
-            throw new IllegalArgumentException("Registry manager cannot be null");
-        }
-        else
-        {
-            //registryManager.getConnectionString();
-        }
-
-    }
-
-    public DeviceTwin()
-    {
-
-    }
-
     public static DeviceTwin createFromConnectionString(String connectionString) throws Exception
     {
         if (connectionString == null || connectionString.length() == 0)
@@ -82,7 +64,7 @@ public class DeviceTwin
             4. If any of the callbacks are set on this device call
         */
 
-        if (device == null)
+        if (device == null || device.getDeviceId() == null || device.getDeviceId().length() == 0)
         {
             throw new IllegalArgumentException("Instantiate a device and set device id to be used");
         }
@@ -102,10 +84,9 @@ public class DeviceTwin
 
         twinObject.updateTwin(twin);
 
-        //device.setTag(twinObject.getTags());
-        device.setDesiredProperties(device.mapToSet(twinObject.getDesiredPropertyMap()));
-        device.setReportedProperties(device.mapToSet(twinObject.getReportedPropertyMap()));
-
+        device.setTag(twinObject.getTagsMap());
+        device.setDesiredProperties(twinObject.getDesiredPropertyMap());
+        device.setReportedProperties(twinObject.getReportedPropertyMap());
     }
 
     public void updateTwin(DeviceTwinDevice device) throws IotHubException, IOException
@@ -124,7 +105,7 @@ public class DeviceTwin
 
         String sasTokenString = new IotHubServiceSasToken(this.iotHubConnectionString).toString();
 
-        String tags = null;//twinObject.updateTwin(device.getTag(), device.getDesiredProperties(), null);
+        String tags = twinObject.updateTwin(device.getDesiredMap(), null, device.getTagMap());
 
         if (tags == null)
         {
@@ -151,7 +132,7 @@ public class DeviceTwin
 
         String sasTokenString = new IotHubServiceSasToken(this.iotHubConnectionString).toString();
 
-        String tags = twinObject.updateDesiredProperty(device.setToMap(device.getDesiredProperties()));
+        String tags = twinObject.updateDesiredProperty(device.getDesiredMap());
 
         if (tags == null)
         {
@@ -177,7 +158,7 @@ public class DeviceTwin
 
         String sasTokenString = new IotHubServiceSasToken(this.iotHubConnectionString).toString();
 
-        String tags = twinObject.updateDesiredProperty(device.setToMap(device.getDesiredProperties())); // change to replace
+        String tags = twinObject.resetDesiredProperty(device.getDesiredMap());
 
         if (tags == null)
         {
@@ -203,7 +184,7 @@ public class DeviceTwin
 
         String sasTokenString = new IotHubServiceSasToken(this.iotHubConnectionString).toString();
 
-        String tags = null ;//= twinObject.replaceTags(device.getTag());
+        String tags = twinObject.resetTags(device.getTagMap());
 
         if (tags == null)
         {

@@ -160,8 +160,8 @@ public class DeviceTwinDeviceTest
     {
         //arrange
         DeviceTwinDevice testDevice = new DeviceTwinDevice("testDevice");
-        Set<Pair> testRepProp = new HashSet<>();
-        testRepProp.add(new Pair("testRep", "repObject"));
+        Map<String, Object> testRepProp = new HashMap<>();
+        testRepProp.put("testRep", "repObject");
 
         //act
         testDevice.setReportedProperties(testRepProp);
@@ -212,6 +212,141 @@ public class DeviceTwinDeviceTest
         assertNotEquals(testDesProp, actualDesProp);
 
     }
+
+    @Test
+    public void getterGetsMapsTags()
+    {
+        //arrange
+        DeviceTwinDevice testDevice = new DeviceTwinDevice("testDevice");
+        Map<String, Object> testTags = new HashMap<>();
+        testTags.put("testTag", "tagObject");
+        testDevice.setTag(testTags);
+
+        //act
+        Map<String, Object> actualTags = testDevice.getTagMap();
+
+        //assert
+        assertEquals(testTags.size(), actualTags.size());
+
+        for(Map.Entry<String, Object> test : actualTags.entrySet())
+        {
+            assertTrue(test.getKey().equals("testTag"));
+            assertTrue(test.getValue().equals("tagObject"));
+        }
+    }
+
+    @Test
+    public void setterSetsMapsTags()
+    {
+        //arrange
+        DeviceTwinDevice testDevice = new DeviceTwinDevice("testDevice");
+        Map<String, Object> testTags = new HashMap<>();
+        testTags.put("testTag", "tagObject");
+
+        //act
+        testDevice.setTag(testTags);
+
+        //assert
+        Map<String, Object> actualTags = testDevice.getTagMap();
+        assertEquals(testTags.size(), actualTags.size());
+
+        for(Map.Entry<String, Object> test : actualTags.entrySet())
+        {
+            assertTrue(test.getKey().equals("testTag"));
+            assertTrue(test.getValue().equals("tagObject"));
+        }
+    }
+
+    @Test
+    public void getterGetsMapsRep()
+    {
+        //arrange
+        DeviceTwinDevice testDevice = new DeviceTwinDevice("testDevice");
+        Map<String, Object> testRep = new HashMap<>();
+        testRep.put("testRep", "repObject");
+        testDevice.setReportedProperties(testRep);
+
+        //act
+        Map<String, Object> actualTags = testDevice.getReportedMap();
+
+        //assert
+        assertEquals(testRep.size(), actualTags.size());
+
+        for(Map.Entry<String, Object> test : actualTags.entrySet())
+        {
+            assertTrue(test.getKey().equals("testRep"));
+            assertTrue(test.getValue().equals("repObject"));
+        }
+    }
+
+    @Test
+    public void setterSetsMapsRep()
+    {
+        //arrange
+        DeviceTwinDevice testDevice = new DeviceTwinDevice("testDevice");
+        Map<String, Object> testRep = new HashMap<>();
+        testRep.put("testRep", "repObject");
+
+        //act
+        testDevice.setReportedProperties(testRep);
+
+        //assert
+        Map<String, Object> actualTags = testDevice.getReportedMap();
+
+        assertEquals(testRep.size(), actualTags.size());
+
+        for(Map.Entry<String, Object> test : actualTags.entrySet())
+        {
+            assertTrue(test.getKey().equals("testRep"));
+            assertTrue(test.getValue().equals("repObject"));
+        }
+    }
+
+    @Test
+    public void getterGetsMapsDes()
+    {
+        //arrange
+        DeviceTwinDevice testDevice = new DeviceTwinDevice("testDevice");
+        Map<String, Object> testRep = new HashMap<>();
+        testRep.put("testRep", "repObject");
+        testDevice.setDesiredProperties(testRep);
+
+        //act
+        Map<String, Object> actualTags = testDevice.getDesiredMap();
+
+        //assert
+        assertEquals(testRep.size(), actualTags.size());
+
+        for(Map.Entry<String, Object> test : actualTags.entrySet())
+        {
+            assertTrue(test.getKey().equals("testRep"));
+            assertTrue(test.getValue().equals("repObject"));
+        }
+    }
+
+    @Test
+    public void setterSetsMapsDes()
+    {
+        //arrange
+        DeviceTwinDevice testDevice = new DeviceTwinDevice("testDevice");
+        Map<String, Object> testRep = new HashMap<>();
+        testRep.put("testRep", "repObject");
+
+        //act
+        testDevice.setDesiredProperties(testRep);
+
+        //assert
+        Map<String, Object> actualTags = testDevice.getDesiredMap();
+
+        assertEquals(testRep.size(), actualTags.size());
+
+        for(Map.Entry<String, Object> test : actualTags.entrySet())
+        {
+            assertTrue(test.getKey().equals("testRep"));
+            assertTrue(test.getValue().equals("repObject"));
+        }
+    }
+
 
     @Test
     public void toStringReturnsAll()
@@ -292,9 +427,9 @@ public class DeviceTwinDeviceTest
         //arrange
         DeviceTwinDevice testDevice = new DeviceTwinDevice("testDevice");
 
-        Set<Pair> testRepProp = new HashSet<>();
-        testRepProp.add(new Pair("testRep1", "repObject1"));
-        testRepProp.add(new Pair("testRep2", "repObject2"));
+        Map<String, Object> testRepProp = new HashMap<>();
+        testRepProp.put("testRep1", "repObject1");
+        testRepProp.put("testRep2", "repObject2");
         testDevice.setReportedProperties(testRepProp);
 
         //act
@@ -308,73 +443,4 @@ public class DeviceTwinDeviceTest
 
     }
 
-    @Test
-    public void mapToSetCreatesNewSet()
-    {
-        //arrange
-        DeviceTwinDevice testDevice = new DeviceTwinDevice("testDevice");
-        Map<String, Object> testMap = new HashMap<>();
-        testMap.put("Key1", "Object1");
-        testMap.put("Key2", "Object2");
-
-        //act
-        Set<Pair> testSet = testDevice.mapToSet(testMap);
-
-        assertNotNull(testSet);
-    }
-
-    @Test
-    public void mapToSetCopiesAllPairsToNewSet()
-    {
-        //arrange
-        DeviceTwinDevice testDevice = new DeviceTwinDevice("testDevice");
-        Map<String, Object> testMap = new HashMap<>();
-        testMap.put("Key1", "Object1");
-        testMap.put("Key2", "Object2");
-
-        //act
-        Set<Pair> testSet = testDevice.mapToSet(testMap);
-
-        //assert
-        assertNotNull(testSet);
-        for (Pair p : testSet)
-        {
-            if (p.getKey().equals("Key1"))
-                 assertEquals(p.getValue(), "Object1");
-            if (p.getKey().equals("Key2"))
-                assertEquals(p.getValue(), "Object2");
-        }
-
-    }
-
-    @Test
-    public void setToMapCreatesNewMap()
-    {
-        //arrange
-        DeviceTwinDevice testDevice = new DeviceTwinDevice("testDevice");
-        Set<Pair> testSet = new HashSet<>();
-        testSet.add(new Pair("Key1", "Object1"));
-        testSet.add(new Pair("Key2", "Object2"));
-
-        //act
-        Map<String, Object> testMap = testDevice.setToMap(testSet);
-
-        assertNotNull(testMap);
-
-    }
-
-    @Test
-    public void setToMapCopiesAllPairsToNewMap()
-    {
-        //arrange
-        DeviceTwinDevice testDevice = new DeviceTwinDevice("testDevice");
-        Set<Pair> testSet = new HashSet<>();
-        testSet.add(new Pair("Key1", "Object1"));
-        testSet.add(new Pair("Key2", "Object2"));
-
-        //act
-        Map<String, Object> testMap = testDevice.setToMap(testSet);
-
-        assertNotNull(testMap);
-    }
 }

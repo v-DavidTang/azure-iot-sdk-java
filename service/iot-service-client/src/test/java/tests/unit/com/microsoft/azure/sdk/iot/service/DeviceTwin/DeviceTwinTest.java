@@ -12,5 +12,57 @@ import org.junit.Test;
  */
 public class DeviceTwinTest
 {
+    @Test
+    public void constructorCreatesTwin() throws Exception
+    {
 
+    }
+
+    @Test
+    public void constructorThrowsOnNullCS() throws Exception
+    {
+
+    }
+
+    @Test
+    public void constructorThrowsOnEmptyCS() throws Exception
+    {
+
+    }
+
+    @Test
+    public void constructorThrowsOnImproperCS() throws Exception
+    {
+
+    }
+
+    @Test
+    public void getTwinSucceeds() throws Exception
+    {
+
+    }
+
+    @Test
+    public void getTwinThrowsOnNullDevice() throws Exception
+    {
+
+    }
+
+    @Test
+    public void getTwinThrowsOnEmptyDeviceID() throws Exception
+    {
+
+    }
+
+    @Test
+    public void getTwinThrowsOnNullDeviceID() throws Exception
+    {
+
+    }
+
+    @Test
+    public void getTwinThrowsVerificationFailure() throws Exception
+    {
+
+    }
 }
