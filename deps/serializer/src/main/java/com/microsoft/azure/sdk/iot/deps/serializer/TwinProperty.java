@@ -234,7 +234,7 @@ public class TwinProperty
     {
         /* Codes_SRS_TWIN_21_017: [The toJsonElement shall return a JsonElement with information in the Twin using json format.] */
         Gson gson = new GsonBuilder().create();
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> diffMap = new HashMap<>();
         Map<String, TwinMetadata> metadata = new HashMap<>();
 
         synchronized (lock)
@@ -244,7 +244,7 @@ public class TwinProperty
                 /* Codes_SRS_TWIN_21_018: [The toJsonElement shall not include null fields.] */
                 if(entry.getValue().value != null)
                 {
-                    map.put(entry.getKey(), entry.getValue().value);
+                    diffMap.put(entry.getKey(), entry.getValue().value);
                     metadata.put(entry.getKey(), entry.getValue().metadata);
                 }
             }
@@ -252,15 +252,15 @@ public class TwinProperty
 
         if(reportMetadata)
         {
-            map.put(METADATA_TAG, metadata);
+            diffMap.put(METADATA_TAG, metadata);
         }
 
         if(version != null)
         {
-            map.put(VERSION_TAG, version);
+            diffMap.put(VERSION_TAG, version);
         }
 
-        return gson.toJsonTree(map);
+        return gson.toJsonTree(diffMap);
     }
 
     protected void update(LinkedTreeMap<String, Object> jsonTree,
