@@ -9,4 +9,14 @@ public class TransportUtils
     public static final String versionIdentifierKey = "com.microsoft:client-version";
     public static String javaServiceClientIdentifier = "com.microsoft.azure.sdk.iot.iot-service-client/";
     public static String serviceVersion = "1.0.13";
+
+    public static String getJavaServiceClientIdentifier()
+    {
+        return javaServiceClientIdentifier;
+    }
+
+    public static String getServiceVersion()
+    {
+        return serviceVersion;
+    }
 }

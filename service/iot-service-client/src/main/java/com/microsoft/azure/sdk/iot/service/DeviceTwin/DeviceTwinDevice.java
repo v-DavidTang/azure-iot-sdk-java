@@ -5,7 +5,10 @@
 
 package com.microsoft.azure.sdk.iot.service.DeviceTwin;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class DeviceTwinDevice
 {
@@ -21,32 +24,40 @@ public class DeviceTwinDevice
 
     public String getDeviceId()
     {
-        return deviceId;
+        return this.deviceId;
     }
 
-    public void setTag(Map<String, Object> tag)
+
+    public void setTag(Set<Pair> tags)
     {
-        this.tag = tag;
+        this.tag = this.setToMap(tags);
     }
 
-    public Map<String, Object> getTag()
+    public Set<Pair> getTag()
     {
-        return tag;
+        return this.mapToSet(this.tag);
     }
 
-    public Map<String, Object> getDesiredProperties()
+
+    public Set<Pair> getDesiredProperties()
     {
-        return desiredProperties;
+        return this.mapToSet(this.desiredProperties);
     }
 
-    public void setDesiredProperties(Map<String, Object> desiredProperties)
+    public void setDesiredProperties(Set<Pair> desiredProperties)
     {
-        this.desiredProperties = desiredProperties;
+        this.desiredProperties = this.setToMap(desiredProperties);
     }
 
-    public Map<String, Object> getReportedProperties()
+
+    public Set<Pair> getReportedProperties()
     {
-        return reportedProperties;
+        return this.mapToSet(this.reportedProperties);
+    }
+
+    protected void setReportedProperties(Set<Pair> reportedProperties)
+    {
+        this.reportedProperties = this.setToMap(reportedProperties);
     }
 
     public String toString()
@@ -64,7 +75,10 @@ public class DeviceTwinDevice
     public String tagsToString()
     {
         StringBuilder thisDeviceTags = new StringBuilder();
-        thisDeviceTags.append("Tags:" + this.getTag().toString());
+        if (tag != null)
+        {
+            thisDeviceTags.append("Tags:" + this.tag.toString() + "\n");
+        }
         return thisDeviceTags.toString();
 
     }
@@ -72,15 +86,51 @@ public class DeviceTwinDevice
     public String desiredPropertiesToString()
     {
         StringBuilder thisDeviceRepProp = new StringBuilder();
-        thisDeviceRepProp.append("Desired Properties: " + this.getDesiredProperties().toString());
+        if (this.desiredProperties != null)
+        {
+            thisDeviceRepProp.append("Desired Properties: " + this.desiredProperties.toString() + "\n");
+        }
         return thisDeviceRepProp.toString();
     }
 
     public String reportedPropertiesToString()
     {
         StringBuilder thisDeviceDesProp = new StringBuilder();
-        thisDeviceDesProp.append("Reported Properties" + this.getReportedProperties().toString());
+        if (this.reportedProperties != null)
+        {
+            thisDeviceDesProp.append("Reported Properties" + this.reportedProperties.toString() + "\n");
+        }
         return thisDeviceDesProp.toString();
     }
 
+    protected Set<Pair> mapToSet(Map<String, Object> map)
+    {
+        Set<Pair> setPair = new HashSet<>();
+
+        if (map != null)
+        {
+            for (Map.Entry<String, Object> setEntry : map.entrySet())
+            {
+                setPair.add(new Pair(setEntry.getKey(), setEntry.getValue()));
+            }
+        }
+
+        return setPair;
+
+    }
+
+    protected Map<String, Object> setToMap(Set<Pair> set)
+    {
+        Map<String, Object> map = new HashMap<>();
+
+        if (set != null)
+        {
+            for (Pair p : set)
+            {
+                map.put(p.getKey(), p.getValue());
+            }
+        }
+
+        return map;
+    }
 }
