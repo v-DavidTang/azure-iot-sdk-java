@@ -47,6 +47,32 @@ public class TwinProperties
         return this.reported.update(property);
     }
 
+    protected JsonElement resetDesired(Map<String, Object> property)
+    {
+        /* Codes_SRS_TWIN_21_120: [The resetDesiredProperty shall shall cleanup the desired database and add all provided properties to the Desired property.] */
+        this.desired = new TwinProperty();
+        return this.desired.update(property);
+    }
+
+    protected JsonElement resetReported(Map<String, Object> property)
+    {
+        /* Codes_SRS_TWIN_21_130: [The resetReportedProperty shall cleanup the reported database and add all provided properties to the Reported property.] */
+        this.reported = new TwinProperty();
+        return this.reported.update(property);
+    }
+
+    protected void clearDesired()
+    {
+        /* Codes_SRS_TWIN_21_122: [If the provided `propertyMap` is null, the resetDesiredProperty shall cleanup the desired database and return null.] */
+        this.desired = new TwinProperty();
+    }
+
+    protected void clearReported()
+    {
+        /* Codes_SRS_TWIN_21_132: [If the provided `propertyMap` is null, the resetReportedProperty shall cleanup the reported database and return null.] */
+        this.reported = new TwinProperty();
+    }
+
     protected void updateDesired(String json, TwinPropertiesChangeCallback onDesiredCallback)
     {
         this.desired.update(json, onDesiredCallback);
