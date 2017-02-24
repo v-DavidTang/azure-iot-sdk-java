@@ -455,13 +455,13 @@ public class Twin
 
             /* Codes_SRS_TWIN_21_120: [The resetDesiredProperty shall cleanup the desired database and add all provided properties to the Desired property.] */
             /* Codes_SRS_TWIN_21_123: [The `key` and `value` in property shall be case sensitive.] */
-            /* Codes_SRS_TWIN_21_124: [If the provided `propertyMap` is empty, the resetDesiredProperty shall cleanup the desired database and return null.] */
+            /* Codes_SRS_TWIN_21_124: [If the provided `propertyMap` is empty, the resetDesiredProperty shall cleanup the desired database and return `{}`.] */
             /* Codes_SRS_TWIN_21_129: [If any `value` is null, the resetDesiredProperty shall store it but do not report on Json.] */
             JsonElement updatedElements = properties.resetDesired(propertyMap);
 
             if (updatedElements == null)
             {
-                json = null;
+                json = "{}";
             }
             else
             {
@@ -471,9 +471,9 @@ public class Twin
         }
         else
         {
-            /* Codes_SRS_TWIN_21_122: [If the provided `propertyMap` is null, the resetDesiredProperty shall cleanup the desired database and return null.] */
+            /* Codes_SRS_TWIN_21_122: [If the provided `propertyMap` is null, the resetDesiredProperty shall cleanup the desired database and return `{}`.] */
             properties.clearDesired();
-            json = null;
+            json = "{}";
         }
 
         return json;
@@ -498,13 +498,13 @@ public class Twin
 
             /* Codes_SRS_TWIN_21_130: [The resetReportedProperty shall cleanup the reported database and add all provided properties to the Reported property.] */
             /* Codes_SRS_TWIN_21_133: [The `key` and `value` in property shall be case sensitive.] */
-            /* Codes_SRS_TWIN_21_134: [If the provided `propertyMap` is empty, the resetReportedProperty shall cleanup the reported database and return null.] */
+            /* Codes_SRS_TWIN_21_134: [If the provided `propertyMap` is empty, the resetReportedProperty shall cleanup the reported database and return `{}`.] */
             /* Codes_SRS_TWIN_21_139: [If any `value` is null, the resetReportedProperty shall store it but do not report on Json.] */
             JsonElement updatedElements = properties.resetReported(propertyMap);
 
             if (updatedElements == null)
             {
-                json = null;
+                json = "{}";
             }
             else
             {
@@ -514,9 +514,9 @@ public class Twin
         }
         else
         {
-            /* Codes_SRS_TWIN_21_132: [If the provided `propertyMap` is null, the resetReportedProperty shall cleanup the reported database and return null.] */
+            /* Codes_SRS_TWIN_21_132: [If the provided `propertyMap` is null, the resetReportedProperty shall cleanup the reported database and return `{}`.] */
             properties.clearReported();
-            json = null;
+            json = "{}";
         }
 
         return json;
@@ -547,14 +547,14 @@ public class Twin
 
             /* Codes_SRS_TWIN_21_140: [The resetTags shall cleanup the tags database and add all provided tags to the tags.] */
             /* Codes_SRS_TWIN_21_143: [The `key` and `value` in tags shall be case sensitive.] */
-            /* Codes_SRS_TWIN_21_144: [If the provided `tagsMap` is empty, the resetTags shall cleanup the tags database and return null.] */
+            /* Codes_SRS_TWIN_21_144: [If the provided `tagsMap` is empty, the resetTags shall cleanup the tags database and return `{}`.] */
             /* Codes_SRS_TWIN_21_149: [If any `value` is null, the resetTags shall store it but do not report on Json.] */
             tags = new TwinTags();
             JsonElement updatedElements = this.tags.update(tagsMap);
 
             if (updatedElements == null)
             {
-                json = null;
+                json = "{}";
             }
             else
             {
@@ -564,9 +564,9 @@ public class Twin
         }
         else
         {
-            /* Codes_SRS_TWIN_21_142: [If the provided `tagsMap` is null, the resetTags shall cleanup the tags database and return null.] */
+            /* Codes_SRS_TWIN_21_142: [If the provided `tagsMap` is null, the resetTags shall cleanup the tags database and return `{}`.] */
             tags = new TwinTags();
-            json = null;
+            json = "{}";
         }
 
         return json;
