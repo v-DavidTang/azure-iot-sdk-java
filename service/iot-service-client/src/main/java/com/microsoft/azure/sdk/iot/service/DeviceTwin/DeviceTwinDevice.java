@@ -37,6 +37,7 @@ public class DeviceTwinDevice
          */
         this.deviceId = deviceId;
         this.twinObject = new Twin();
+        this.twinObject.enableTags();
     }
 
     public String getDeviceId()

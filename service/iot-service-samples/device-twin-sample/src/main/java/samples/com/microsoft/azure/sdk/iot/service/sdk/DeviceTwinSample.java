@@ -46,7 +46,7 @@ public class DeviceTwinSample
 
             Set<Pair> tagsSet = new HashSet<Pair>();
             tagsSet.add(new Pair("Building", 101));
-            device.setTag(tagsSet);
+            device.setTags(tagsSet);
 
             twinClient.updateTwin(device);
             System.out.println("Device : " + device.getDeviceId() + "contains following tags \n" + device.tagsToString());
