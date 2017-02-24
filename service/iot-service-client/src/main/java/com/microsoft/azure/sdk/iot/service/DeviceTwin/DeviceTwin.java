@@ -1,21 +1,20 @@
-/*
+/**
  * Copyright (c) Microsoft. All rights reserved.
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 package com.microsoft.azure.sdk.iot.service.DeviceTwin;
 
-import com.microsoft.azure.sdk.iot.deps.serializer.Twin;
 import com.microsoft.azure.sdk.iot.service.auth.IotHubServiceSasToken;
 import com.microsoft.azure.sdk.iot.service.exceptions.IotHubException;
 import com.microsoft.azure.sdk.iot.service.exceptions.IotHubExceptionManager;
 import com.microsoft.azure.sdk.iot.service.sdk.IotHubConnectionString;
 import com.microsoft.azure.sdk.iot.service.sdk.IotHubConnectionStringBuilder;
-import com.microsoft.azure.sdk.iot.service.sdk.RegistryManager;
 import com.microsoft.azure.sdk.iot.service.transport.TransportUtils;
 import com.microsoft.azure.sdk.iot.service.transport.http.HttpMethod;
 import com.microsoft.azure.sdk.iot.service.transport.http.HttpRequest;
 import com.microsoft.azure.sdk.iot.service.transport.http.HttpResponse;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,175 +26,291 @@ public class DeviceTwin
     private IotHubConnectionString iotHubConnectionString = null;
     private final Integer DEFAULT_HTTP_TIMOUT_MS = 24000;
     private Integer requestId = 0;
-    private Twin twinObject = new Twin();
 
     public static DeviceTwin createFromConnectionString(String connectionString) throws Exception
     {
         if (connectionString == null || connectionString.length() == 0)
         {
+            /**
+            **Codes_SRS_DEVICETWIN_25_001: [** The constructor shall throw IllegalArgumentException if the input string is null or empty **]**
+             */
             throw new IllegalArgumentException("Connection string cannot be null or empty");
         }
-
+        /**
+        **Codes_SRS_DEVICETWIN_25_003: [** The constructor shall create a new DeviceTwin instance and return it **]**
+         */
         DeviceTwin deviceTwin = new DeviceTwin();
+        /**
+        **Codes_SRS_DEVICETWIN_25_002: [** The constructor shall create an IotHubConnectionStringBuilder object from the given connection string **]**
+         */
         deviceTwin.iotHubConnectionString = IotHubConnectionStringBuilder.createConnectionString(connectionString);
         return deviceTwin;
     }
 
-    private HttpRequest createTwinRequest(URL url, HttpMethod method, byte[] payload, String sasToken, String requestId) throws IOException
+    private HttpResponse processHttpTwinRequest(URL url, HttpMethod method, byte[] payload, String requestId) throws IOException, IotHubException
     {
         HttpRequest request = new HttpRequest(url, method, payload);
+        String sasTokenString = new IotHubServiceSasToken(this.iotHubConnectionString).toString();
         request.setReadTimeoutMillis(DEFAULT_HTTP_TIMOUT_MS);
-        request.setHeaderField("authorization", sasToken);
+        request.setHeaderField("authorization", sasTokenString);
         request.setHeaderField("Request-Id", requestId);
         request.setHeaderField("User-Agent", TransportUtils.getJavaServiceClientIdentifier() + "/" + TransportUtils.getServiceVersion());
         request.setHeaderField("Accept", "application/json");
         request.setHeaderField("Content-Type", "application/json");
         request.setHeaderField("charset", "utf-8");
         request.setHeaderField("If-Match", "'*'");
-        return request;
+
+        HttpResponse response = request.send();
+
+        IotHubExceptionManager.httpResponseVerification(response);
+
+        return response;
     }
 
     public void getTwin(DeviceTwinDevice device) throws IotHubException, IOException
     {
-        /*
-            1. Call get twin on HTTP
-            2. Use the HTTP payload and call updateTwin(String)
-            3. getTags, getDesired, getReported on serializer and set it on device
-            4. If any of the callbacks are set on this device call
-        */
-
         if (device == null || device.getDeviceId() == null || device.getDeviceId().length() == 0)
         {
+            /**
+            **Codes_SRS_DEVICETWIN_25_004: [** The function shall throw IllegalArgumentException if the input device is null or if deviceId is null or empty **]**
+             */
             throw new IllegalArgumentException("Instantiate a device and set device id to be used");
         }
 
+        /**
+        **Codes_SRS_DEVICETWIN_25_005: [** The function shall build the URL for this operation by calling getUrlTwin **]**
+         */
         URL url = this.iotHubConnectionString.getUrlTwin(device.getDeviceId());
 
-        String sasTokenString = new IotHubServiceSasToken(this.iotHubConnectionString).toString();
+        /**
+        **Codes_SRS_DEVICETWIN_25_006: [** The function shall create a new SAS token **]**
+        **Codes_SRS_DEVICETWIN_25_007: [** The function shall create a new HttpRequest with http method as Get **]**
+        **Codes_SRS_DEVICETWIN_25_008: [** The function shall set the following HTTP headers specified in the IotHub DeviceTwin doc.
+                                                1. Key as authorization with value as sastoken
+                                                2. Key as request id with a new string value for every request
+                                                3. Key as User-Agent with value specified by the clientIdentifier and its version
+                                                4. Key as Accept with value as application/json
+                                                5. Key as Content-Type and value as application/json
+                                                6. Key as charset and value as utf-8
+                                                7. Key as If-Match and value as '*'  **]**
+         **Codes_SRS_DEVICETWIN_25_009: [** The function shall send the created request and get the response **]**
+         **Codes_SRS_DEVICETWIN_25_010: [** The function shall verify the response status and throw proper Exception **]**
+         */
+        HttpResponse response = this.processHttpTwinRequest(url, HttpMethod.GET, new byte[0], String.valueOf(requestId++));
 
-        HttpRequest request = createTwinRequest(url, HttpMethod.GET, new byte[0], sasTokenString, String.valueOf(requestId++));
-
-        HttpResponse response = request.send();
-
-        IotHubExceptionManager.httpResponseVerification(response);
-
-        // Codes_SRS_SERVICE_SDK_JAVA_REGISTRYMANAGER_12_011: [The function shall create a new Device object from the response and return with it]
         String twin = new String(response.getBody(), StandardCharsets.UTF_8);
 
-        twinObject.updateTwin(twin);
+        /**
+        **Codes_SRS_DEVICETWIN_25_011: [** The function shall deserialize the payload by calling updateTwin Api on the twin object **]**
+         */
+        device.getTwinObject().updateTwin(twin);
 
-        device.setTag(twinObject.getTagsMap());
-        device.setDesiredProperties(twinObject.getDesiredPropertyMap());
-        device.setReportedProperties(twinObject.getReportedPropertyMap());
+        /**
+        **Codes_SRS_DEVICETWIN_25_012: [** The function shall set tags, desired property map, reported property map on the user device **]**
+         */
+        device.setTags(device.getTwinObject().getTagsMap());
+        device.setDesiredProperties(device.getTwinObject().getDesiredPropertyMap());
+        device.setReportedProperties(device.getTwinObject().getReportedPropertyMap());
     }
 
     public void updateTwin(DeviceTwinDevice device) throws IotHubException, IOException
     {
-        /*
-            1. Convert to map
-            2. Serialize by calling updateTags
-            3. Use the string as payload and send it via http
-         */
-        if (device == null)
+        if (device == null || device.getDeviceId() == null || device.getDeviceId().length() == 0)
         {
+            /**
+            **Codes_SRS_DEVICETWIN_25_013: [** The function shall throw IllegalArgumentException if the input device is null or if deviceId is null or empty **]**
+             */
             throw new IllegalArgumentException("Instantiate a device and set device id to be used");
         }
 
+        /**
+        **Codes_SRS_DEVICETWIN_25_014: [** The function shall build the URL for this operation by calling getUrlTwin **]**
+         */
         URL url = this.iotHubConnectionString.getUrlTwin(device.getDeviceId());
 
-        String sasTokenString = new IotHubServiceSasToken(this.iotHubConnectionString).toString();
+        /**
+        **Codes_SRS_DEVICETWIN_25_015: [** The function shall serialize the twin map by calling updateTwin Api on the twin object for the device provided by the user**]**
+         */
+        String twinJson = device.getTwinObject().updateTwin(device.getDesiredMap(), null, device.getTagsMap());
 
-        String tags = twinObject.updateTwin(device.getDesiredMap(), null, device.getTagMap());
-
-        if (tags == null)
+        if (twinJson == null)
         {
             return;
         }
 
-        HttpRequest request = createTwinRequest(url, HttpMethod.PATCH, tags.getBytes(), sasTokenString, String.valueOf(requestId++));
+        throw new NotImplementedException();
+        /**
+        **Codes_SRS_DEVICETWIN_25_016: [** The function shall create a new SAS token **]**
 
-        HttpResponse response = request.send();
+        **Codes_SRS_DEVICETWIN_25_017: [** The function shall create a new HttpRequest with http method as Patch **]**
 
-        IotHubExceptionManager.httpResponseVerification(response);
+        **Codes_SRS_DEVICETWIN_25_018: [** The function shall set the following HTTP headers specified in the IotHub DeviceTwin doc.
+                                                1. Key as authorization with value as sastoken
+                                                2. Key as request id with a new string value for every request
+                                                3. Key as User-Agent with value specified by the clientIdentifier and its version
+                                                4. Key as Accept with value as application/json
+                                                5. Key as Content-Type and value as application/json
+                                                6. Key as charset and value as utf-8
+                                                7. Key as If-Match and value as '*'  **]**
 
+        **Codes_SRS_DEVICETWIN_25_019: [** The function shall send the created request and get the response **]**
 
+        **Codes_SRS_DEVICETWIN_25_020: [** The function shall verify the response status and throw proper Exception **]**
+         */
+        /**
+        HttpResponse response = this.processHttpTwinRequest(url, HttpMethod.PATCH, twinJson.getBytes(), String.valueOf(requestId++));
+        */
     }
 
     public void updateDesiredProperties(DeviceTwinDevice device) throws IotHubException, IOException
     {
-        if (device == null)
+        if (device == null || device.getDeviceId() == null || device.getDeviceId().length() == 0)
         {
+            /**
+            **Codes_SRS_DEVICETWIN_25_021: [** The function shall throw IllegalArgumentException if the input device is null or if deviceId is null or empty **]**
+             */
             throw new IllegalArgumentException("Instantiate a device and set device id to be used");
         }
 
+        /**
+        **Codes_SRS_DEVICETWIN_25_022: [** The function shall build the URL for this operation by calling getUrlTwinDesired **]**
+         */
         URL url = this.iotHubConnectionString.getUrlTwinDesired(device.getDeviceId());
 
-        String sasTokenString = new IotHubServiceSasToken(this.iotHubConnectionString).toString();
+        /**
+        **Codes_SRS_DEVICETWIN_25_023: [** The function shall serialize the desired properties map by calling updateDesiredProperty Api on the twin object for the device provided by the user**]**
+         */
+        String desiredJson = device.getTwinObject().updateDesiredProperty(device.getDesiredMap());
 
-        String tags = twinObject.updateDesiredProperty(device.getDesiredMap());
-
-        if (tags == null)
+        if (desiredJson == null)
         {
             return;
         }
 
-        HttpRequest request = createTwinRequest(url, HttpMethod.PATCH, tags.getBytes(), sasTokenString, String.valueOf(requestId++));
+        throw new NotImplementedException();
+        /**
+        **Codes_SRS_DEVICETWIN_25_024: [** The function shall create a new SAS token **]**
 
-        HttpResponse response = request.send();
+        **Codes_SRS_DEVICETWIN_25_025: [** The function shall create a new HttpRequest with http method as Patch **]**
 
-        IotHubExceptionManager.httpResponseVerification(response);
+        **Codes_SRS_DEVICETWIN_25_026: [** The function shall set the following HTTP headers specified in the IotHub DeviceTwin doc.
+                                                1. Key as authorization with value as sastoken
+                                                2. Key as request id with a new string value for every request
+                                                3. Key as User-Agent with value specified by the clientIdentifier and its version
+                                                4. Key as Accept with value as application/json
+                                                5. Key as Content-Type and value as application/json
+                                                6. Key as charset and value as utf-8
+                                                7. Key as If-Match and value as '*'  **]**
+
+        **Codes_SRS_DEVICETWIN_25_027: [** The function shall send the created request and get the response **]**
+
+        **Codes_SRS_DEVICETWIN_25_028: [** The function shall verify the response status and throw proper Exception **]**
+         */
+        /**
+         * To be added to the code once service supports Patch via X-HTTP-Method
+        HttpResponse response = this.processHttpTwinRequest(url, HttpMethod.PATCH, desiredJson.getBytes(), String.valueOf(requestId++));
+       */
 
     }
 
     public void replaceDesired(DeviceTwinDevice device) throws IotHubException, IOException
     {
-        if (device == null)
+        if (device == null || device.getDeviceId() == null || device.getDeviceId().length() == 0)
         {
+            /***
+            **Codes_SRS_DEVICETWIN_25_029: [** The function shall throw IllegalArgumentException if the input device is null or if deviceId is null or empty **]**
+             */
             throw new IllegalArgumentException("Instantiate a device and set device id to be used");
         }
 
+        /***
+        **Codes_SRS_DEVICETWIN_25_030: [** The function shall build the URL for this operation by calling getUrlTwinDesired **]**
+         */
         URL url = this.iotHubConnectionString.getUrlTwinDesired(device.getDeviceId());
 
-        String sasTokenString = new IotHubServiceSasToken(this.iotHubConnectionString).toString();
+        /***
+        **Codes_SRS_DEVICETWIN_25_031: [** The function shall serialize the desired properties map by calling resetDesiredProperty Api on the twin object for the device provided by the user**]**
+         */
+        String tags = device.getTwinObject().resetDesiredProperty(device.getDesiredMap());
 
-        String tags = twinObject.resetDesiredProperty(device.getDesiredMap());
-
-        if (tags == null)
+        if (tags == null || tags.length() == 0)
         {
-            return;
+            /**
+             *Codes_SRS_DEVICETWIN_25_045: [** If resetDesiredProperty call returns null or empty string then this method shall throw IOException**]**
+             */
+            throw new IOException("Serializer cannot return null or empty string");
+
         }
 
-        HttpRequest request = createTwinRequest(url, HttpMethod.PUT, tags.getBytes(), sasTokenString, String.valueOf(requestId++));
+        /***
+        **Codes_SRS_DEVICETWIN_25_032: [** The function shall create a new SAS token **]**
+        **Codes_SRS_DEVICETWIN_25_033: [** The function shall create a new HttpRequest with http method as PUT **]**
 
-        HttpResponse response = request.send();
+        **Codes_SRS_DEVICETWIN_25_034: [** The function shall set the following HTTP headers specified in the IotHub DeviceTwin doc.
+                                                1. Key as authorization with value as sastoken
+                                                2. Key as request id with a new string value for every request
+                                                3. Key as User-Agent with value specified by the clientIdentifier and its version
+                                                4. Key as Accept with value as application/json
+                                                5. Key as Content-Type and value as application/json
+                                                6. Key as charset and value as utf-8
+                                                7. Key as If-Match and value as '*'  **]**
 
-        IotHubExceptionManager.httpResponseVerification(response);
+        **Codes_SRS_DEVICETWIN_25_035: [** The function shall send the created request and get the response **]**
+
+        **Codes_SRS_DEVICETWIN_25_036: [** The function shall verify the response status and throw proper Exception **]**
+         */
+        HttpResponse response = this.processHttpTwinRequest(url, HttpMethod.PUT, tags.getBytes(), String.valueOf(requestId++));
 
     }
 
     public void replaceTags(DeviceTwinDevice device) throws IotHubException, IOException
     {
-        if (device == null)
+        if (device == null || device.getDeviceId() == null || device.getDeviceId().length() == 0)
         {
+            /**
+             * Codes_SRS_DEVICETWIN_25_037: [** The function shall throw IllegalArgumentException if the input device is null or if deviceId is null or empty **]**
+             */
             throw new IllegalArgumentException("Instantiate a device and set device id to be used");
         }
 
+        /**
+        **Codes_SRS_DEVICETWIN_25_038: [** The function shall build the URL for this operation by calling getUrlTwinTags **]**
+         */
         URL url = this.iotHubConnectionString.getUrlTwinTags(device.getDeviceId());
 
-        String sasTokenString = new IotHubServiceSasToken(this.iotHubConnectionString).toString();
+        /**
+        **Codes_SRS_DEVICETWIN_25_039: [** The function shall serialize the tags map by calling resetTags Api on the twin object for the device provided by the user**]**
+         */
+        String tags = device.getTwinObject().resetTags(device.getTagsMap());
 
-        String tags = twinObject.resetTags(device.getTagMap());
-
-        if (tags == null)
+        if (tags == null || tags.length() == 0)
         {
-            return;
+            /**
+             **Codes_SRS_DEVICETWIN_25_046: [** If resetTags call returns null or empty string then this method shall throw IOException**]**
+             */
+            throw new IOException("Serializer cannot return null or empty");
         }
 
-        HttpRequest request = createTwinRequest(url, HttpMethod.PUT, tags.getBytes(), sasTokenString, String.valueOf(requestId++));
+        /**
+        **Codes_SRS_DEVICETWIN_25_040: [** The function shall create a new SAS token **]**
 
-        HttpResponse response = request.send();
+        **Codes_SRS_DEVICETWIN_25_041: [** The function shall create a new HttpRequest with http method as PUT **]**
 
-        IotHubExceptionManager.httpResponseVerification(response);
+        **Codes_SRS_DEVICETWIN_25_042: [** The function shall set the following HTTP headers specified in the IotHub DeviceTwin doc.
+                                                1. Key as authorization with value as sastoken
+                                                2. Key as request id with a new string value for every request
+                                                3. Key as User-Agent with value specified by the clientIdentifier and its version
+                                                4. Key as Accept with value as application/json
+                                                5. Key as Content-Type and value as application/json
+                                                6. Key as charset and value as utf-8
+                                                7. Key as If-Match and value as '*'  **]**
+
+        **Codes_SRS_DEVICETWIN_25_043: [** The function shall send the created request and get the response **]**
+
+        **Codes_SRS_DEVICETWIN_25_044: [** The function shall verify the response status and throw proper Exception **]**
+
+         */
+        HttpResponse response = this.processHttpTwinRequest(url, HttpMethod.PUT, tags.getBytes(), String.valueOf(requestId++));
 
     }
 

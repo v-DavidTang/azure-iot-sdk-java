@@ -23,7 +23,7 @@ import java.util.Set;
 public class DeviceTwinSample
 {
     public static final String iotHubConnectionString = "HostName=aziot-prmathur.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=m81kcZh4/3bjZyla+ChvFHxeezVgiyYK9iguWWAK7jg=";
-    public static final String deviceId = "TwinDevice";
+    public static final String deviceId = "homeKit";
 
     /**
      * @param args
