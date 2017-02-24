@@ -1110,7 +1110,7 @@ public class TwinTest {
         assertThat(result.get("key5").toString(), is("value5"));
     }
 
-    /* Tests_SRS_TWIN_21_122: [If the provided `propertyMap` is null, the resetDesiredProperty shall cleanup the desired database and return null.] */
+    /* Tests_SRS_TWIN_21_122: [If the provided `propertyMap` is null, the resetDesiredProperty shall cleanup the desired database and return `{}`.] */
     @Test
     public void resetDesiredProperty_null_succeed()
     {
@@ -1126,7 +1126,7 @@ public class TwinTest {
         String json = twin.resetDesiredProperty(null);
 
         // Assert
-        assertNull(json);
+        assertThat(json, is("{}"));
         assertNull(twin.getDesiredPropertyMap());
     }
 
@@ -1160,7 +1160,7 @@ public class TwinTest {
         assertThat(result.get("kEy1").toString(), is("value5"));
     }
 
-    /* Tests_SRS_TWIN_21_124: [If the provided `propertyMap` is empty, the resetDesiredProperty shall cleanup the desired database and return null.] */
+    /* Tests_SRS_TWIN_21_124: [If the provided `propertyMap` is empty, the resetDesiredProperty shall cleanup the desired database and return `{}`.] */
     @Test
     public void resetDesiredProperty_empty_succeed()
     {
@@ -1177,7 +1177,7 @@ public class TwinTest {
         String json = twin.resetDesiredProperty(newValues);
 
         // Assert
-        assertNull(json);
+        assertThat(json, is("{}"));
         assertNull(twin.getDesiredPropertyMap());
     }
 
@@ -1284,7 +1284,7 @@ public class TwinTest {
         assertThat(result.get("key5").toString(), is("value5"));
     }
 
-    /* Tests_SRS_TWIN_21_132: [If the provided `propertyMap` is null, the resetReportedProperty shall cleanup the reported database and return null.] */
+    /* Tests_SRS_TWIN_21_132: [If the provided `propertyMap` is null, the resetReportedProperty shall cleanup the reported database and return `{}`.] */
     @Test
     public void resetReportedProperty_null_succeed()
     {
@@ -1300,7 +1300,7 @@ public class TwinTest {
         String json = twin.resetReportedProperty(null);
 
         // Assert
-        assertNull(json);
+        assertThat(json, is("{}"));
         assertNull(twin.getReportedPropertyMap());
     }
 
@@ -1334,7 +1334,7 @@ public class TwinTest {
         assertThat(result.get("kEy1").toString(), is("value5"));
     }
 
-    /* Tests_SRS_TWIN_21_134: [If the provided `propertyMap` is empty, the resetReportedProperty shall cleanup the reported database and return null.] */
+    /* Tests_SRS_TWIN_21_134: [If the provided `propertyMap` is empty, the resetReportedProperty shall cleanup the reported database and return `{}`.] */
     @Test
     public void resetReportedProperty_empty_succeed()
     {
@@ -1351,7 +1351,7 @@ public class TwinTest {
         String json = twin.resetReportedProperty(newValues);
 
         // Assert
-        assertNull(json);
+        assertThat(json, is("{}"));
         assertNull(twin.getReportedPropertyMap());
     }
 
@@ -5412,7 +5412,7 @@ public class TwinTest {
     }
 
 
-    /* Tests_SRS_TWIN_21_142: [If the provided `tagsMap` is null, the resetTags shall cleanup the tags database and return null.] */
+    /* Tests_SRS_TWIN_21_142: [If the provided `tagsMap` is null, the resetTags shall cleanup the tags database and return `{}`.] */
     @Test
     public void resetTags_nullMap_succeed()
     {
@@ -5439,13 +5439,13 @@ public class TwinTest {
         String json = twin.resetTags(null);
 
         // Assert
-        assertNull(json);
+        assertThat(json, is("{}"));
 
         Map<String, Object> tagMap = twin.getTagsMap();
         assertThat(tagMap.size(), is(0));
     }
 
-    /* Tests_SRS_TWIN_21_144: [If the provided `tagsMap` is empty, the resetTags shall cleanup the tags database and return null.] */
+    /* Tests_SRS_TWIN_21_144: [If the provided `tagsMap` is empty, the resetTags shall cleanup the tags database and return `{}`.] */
     @Test
     public void resetTags_emptyMap_succeed()
     {
@@ -5473,7 +5473,7 @@ public class TwinTest {
         String json = twin.resetTags(newValues);
 
         // Assert
-        assertNull(json);
+        assertThat(json, is("{}"));
 
         Map<String, Object> tagMap = twin.getTagsMap();
         assertThat(tagMap.size(), is(0));

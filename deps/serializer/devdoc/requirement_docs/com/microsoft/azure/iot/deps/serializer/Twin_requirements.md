@@ -475,9 +475,9 @@ public String resetDesiredProperty(Map<String, Object> propertyMap) throws Illeg
 
 **SRS_TWIN_21_120: [**The resetDesiredProperty shall cleanup the desired database and add all provided properties to the Desired property.**]**  
 **SRS_TWIN_21_121: [**The resetDesiredProperty shall return a string with json representing the added desired properties.**]**  
-**SRS_TWIN_21_122: [**If the provided `propertyMap` is null, the resetDesiredProperty shall cleanup the desired database and return null.**]**  
+**SRS_TWIN_21_122: [**If the provided `propertyMap` is null, the resetDesiredProperty shall cleanup the desired database and return `{}`.**]**  
 **SRS_TWIN_21_123: [**The `key` and `value` in property shall be case sensitive.**]**  
-**SRS_TWIN_21_124: [**If the provided `propertyMap` is empty, the resetDesiredProperty shall cleanup the desired database and return null.**]**  
+**SRS_TWIN_21_124: [**If the provided `propertyMap` is empty, the resetDesiredProperty shall cleanup the desired database and return `{}`.**]**  
 **SRS_TWIN_21_125: [**If the map is invalid, the resetDesiredProperty shall not change the database and throw IllegalArgumentException.**]**  
 **SRS_TWIN_21_129: [**If any `value` is null, the resetDesiredProperty shall store it but do not report on Json.**]**  
 
@@ -498,9 +498,9 @@ public String resetReportedProperty(Map<String, Object> propertyMap) throws Ille
 
 **SRS_TWIN_21_130: [**The resetReportedProperty shall cleanup the reported database and add all provided properties to the Reported property.**]**  
 **SRS_TWIN_21_131: [**The resetReportedProperty shall return a string with json representing the added reported properties.**]**  
-**SRS_TWIN_21_132: [**If the provided `propertyMap` is null, the resetReportedProperty shall cleanup the reported database and return null.**]**  
+**SRS_TWIN_21_132: [**If the provided `propertyMap` is null, the resetReportedProperty shall cleanup the reported database and return `{}`.**]**  
 **SRS_TWIN_21_133: [**The `key` and `value` in property shall be case sensitive.**]**  
-**SRS_TWIN_21_134: [**If the provided `propertyMap` is empty, the resetReportedProperty shall cleanup the reported database and return null.**]**  
+**SRS_TWIN_21_134: [**If the provided `propertyMap` is empty, the resetReportedProperty shall cleanup the reported database and return `{}`.**]**  
 **SRS_TWIN_21_135: [**If the map is invalid, the resetReportedProperty shall not change the database and throw IllegalArgumentException.**]**  
 **SRS_TWIN_21_139: [**If any `value` is null, the resetReportedProperty shall store it but do not report on Json.**]**  
 
@@ -521,9 +521,9 @@ public String resetTags(Map<String, Object> tagsMap) throws IllegalArgumentExcep
 
 **SRS_TWIN_21_140: [**The resetTags shall cleanup the tags database and add all provided tags to the tags.**]**  
 **SRS_TWIN_21_141: [**The resetTags shall return a string with json representing the added tags.**]**  
-**SRS_TWIN_21_142: [**If the provided `tagsMap` is null, the resetTags shall cleanup the tags database and return null.**]**  
+**SRS_TWIN_21_142: [**If the provided `tagsMap` is null, the resetTags shall cleanup the tags database and return `{}`.**]**  
 **SRS_TWIN_21_143: [**The `key` and `value` in tags shall be case sensitive.**]**  
-**SRS_TWIN_21_144: [**If the provided `tagsMap` is empty, the resetTags shall cleanup the tags database and return null.**]**  
+**SRS_TWIN_21_144: [**If the provided `tagsMap` is empty, the resetTags shall cleanup the tags database and return `{}`.**]**  
 **SRS_TWIN_21_145: [**If the map is invalid, the resetTags shall not change the database and throw IllegalArgumentException.**]**  
 **SRS_TWIN_21_146: [**If Tags is not enable, the resetTags shall throw IllegalArgumentException.**]**  
 **SRS_TWIN_21_149: [**If any `value` is null, the resetTags shall store it but do not report on Json.**]**  
