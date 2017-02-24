@@ -144,18 +144,6 @@ public class TwinTags
         return gson.toJsonTree(tags);
     }
 
-    protected void fromJson(String json)
-    {
-        Gson gson = new GsonBuilder().create();
-        TwinTags newValues = gson.fromJson(json, TwinTags.class);
-        copy(newValues);
-    }
-
-    private void copy(TwinTags newValues)
-    {
-
-    }
-
     protected void update(Map<String, Object> tagsMap, TwinTagsChangeCallback onTagsCallback)
     {
         Map<String, Object> diffMap = updateFromJson(tagsMap, tags);
